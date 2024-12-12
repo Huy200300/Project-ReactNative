@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Pressable,
 } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import useProduct from "../hooks/useProduct";
 import displayCurrency from "../helpers/displayCurrency";
@@ -17,6 +17,8 @@ import calculateDiscount from "../helpers/calculateDiscount";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import useCustomToast from "../helpers/useCustomToast";
 import { CartContext, CartType } from "../context/CartContext";
+import ReviewForm from "../components/ReviewForm";
+import { UserType } from "../context/UserContext";
 
 const ProductInfoScreen = () => {
   const route = useRoute();
@@ -26,7 +28,8 @@ const ProductInfoScreen = () => {
   const [addedToCart, setAddedToCart] = useState(false);
   const { showToast } = useCustomToast();
   const { addToCart } = useContext(CartType);
-
+  const { userId } = useContext(UserType);
+  const [user, setUser] = useState(null);
   const {
     data,
     selectedColor,
@@ -41,6 +44,22 @@ const ProductInfoScreen = () => {
     selectedStorage,
   } = useProduct(route.params.id);
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const response = await fetch(`${SummaryApi.current_user.url}/${userId}`, {
+        method: SummaryApi.current_user.method,
+        credentials: "include",
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+      const dataApi = await response.json();
+      setUser(dataApi.data);
+    };
+
+    fetchUserProfile();
+  }, [userId]);
+
   const handleAddToCart = (product) => {
     setAddedToCart(true);
     const filteredColors = product.colors.filter(
@@ -52,11 +71,9 @@ const ProductInfoScreen = () => {
         color.colorName === selectedColor && color.size === selectedStorage
     );
 
-    // console.log("filteredColors", colorData);
     const price = colorData?.price || product.price;
     const sellingPrice = colorData?.sellingPrice || product.sellingPrice;
     const countInStock = colorData?.stock || product.countInStock;
-    console.log("countInStock", countInStock);
     const productWithSelections = {
       _id: product._id,
       productName: product.productName,
@@ -342,6 +359,7 @@ const ProductInfoScreen = () => {
           </Text>
         )}
       </Pressable>
+
     </ScrollView>
   );
 };

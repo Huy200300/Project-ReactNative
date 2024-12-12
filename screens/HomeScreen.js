@@ -145,7 +145,7 @@ const HomeScreen = () => {
 
           <CategoryList />
 
-          <ReanimatedSlider />
+          {/* <ReanimatedSlider /> */}
 
           <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold" }}>
             Sản phẩm mới

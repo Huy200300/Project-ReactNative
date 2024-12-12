@@ -146,6 +146,32 @@ const ConfirmationScreen = ({ route }) => {
       } else {
         showToast(datas.message, "error");
       }
+    } else if (type === "VNPay") {
+      const products = getSelectedProductInfo(cart);
+      const body = {
+        amount: total,
+        lang: "vn",
+        userId: userId,
+        products,
+        shipping: shippingFee,
+        shippingMethod,
+        shippingAddress: selectedAddress,
+        sourceApp: "ReactNative",
+      };
+      const datas = await makeApiRequest(
+        SummaryApi.payment_vnpay.url,
+        SummaryApi.payment_vnpay.method,
+        body
+      );
+      if (datas?.url) {
+        navigation.replace("WebView", {
+          url: datas.url,
+          type: type,
+          orderId: datas.orderId,
+        });
+      } else {
+        showToast(datas.message, "error");
+      }
     }
   };
 
@@ -474,6 +500,16 @@ const ConfirmationScreen = ({ route }) => {
               <Entypo
                 onPress={() => {
                   setSelectedOption("vnpay");
+                  Alert.alert("UPI/Debit card", "Pay Online", [
+                    {
+                      text: "Cancel",
+                      onPress: () => console.log("Cancel is pressed"),
+                    },
+                    {
+                      text: "OK",
+                      onPress: () => pay("VNPay"),
+                    },
+                  ]);
                 }}
                 name="circle"
                 size={20}

@@ -81,6 +81,26 @@ const SummaryApi = {
     url: `${backendDomain}/api/addNewAddress`,
     method: "POST",
   },
+  newReview: {
+    url: `${backendDomain}/api/reviews`,
+    method: "POST",
+  },
+  getReview: {
+    url: `${backendDomain}/api/get-reviews`,
+    method: "POST",
+  },
+  reviews_like: {
+    url: `${backendDomain}/api/reviews/like`,
+    method: "POST",
+  },
+  reviews_replies: {
+    url: `${backendDomain}/api/reviews/replies`,
+    method: "POST",
+  },
+  payment_vnpay: {
+    url: `${backendDomain}/api/create_payment_url`,
+    method: "POST",
+  },
 };
 
 export default SummaryApi;

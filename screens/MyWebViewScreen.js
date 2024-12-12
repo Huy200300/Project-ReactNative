@@ -11,9 +11,8 @@ const MyWebView = () => {
   const webViewRef = useRef(null);
   const { clearCart } = useContext(CartType);
 
-
   const handlePaymentResult = (resultCode) => {
-    if (resultCode === "0") {
+    if (resultCode === "0" || resultCode === "00") {
       clearCart();
       navigation.navigate("OrderStatus");
     }
@@ -31,14 +30,19 @@ const MyWebView = () => {
         style={{ marginTop: 20 }}
         javaScriptEnabled={true}
         onNavigationStateChange={(navState) => {
+          if (navState.url.includes("vnp_ResponseCode")) {
+            const url = navState.url;
+            const resultCode = new URLSearchParams(url.split("?")[1]).get(
+              "vnp_ResponseCode"
+            );
+            handlePaymentResult(resultCode);
+          }
           if (navState.url.includes("resultCode")) {
             const url = navState.url;
-            console.log(url)
             const resultCode = new URLSearchParams(url.split("?")[1]).get(
               "resultCode"
             );
             handlePaymentResult(resultCode);
-            
           }
         }}
       />
